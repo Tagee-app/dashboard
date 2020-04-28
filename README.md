@@ -1,4 +1,7 @@
-# dashboard
+# Tagee
+
+Tagee is a web application created to help and support companies in managing the presence of their collaborators.
+
 
 ## Project setup
 ```
@@ -15,10 +18,3 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
