@@ -9,7 +9,7 @@
                          transition="scale-transition"
                          type="success"
                 >
-                   Utenza creata con successo. Ora puoi effettuare la <strong>login</strong>.
+                    Utenza creata con successo. Ora puoi effettuare la <strong>login</strong>.
                 </v-alert>
             </div>
 
@@ -34,6 +34,9 @@
                                             <v-col cols="12">
                                                 <v-text-field autocomplete="new-password" v-model="loginEmail"
                                                               :rules="rules.emailRules" label="E-mail"
+                                                              :error="emailError"
+                                                              :error-messages="loginErrorMessage"
+                                                              @input="resetValidation"
                                                               required></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
@@ -41,15 +44,29 @@
                                                               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                                                               :rules="[rules.required]" :type="'password'"
                                                               name="input-10-1" label="Password"
-                                                              hint="At least 8 characters" counter
+                                                              hint="Almeno 8 charatteri" counter
+                                                              :error="passwordError"
+                                                              :error-messages="passwordErrorMessage"
+                                                              @input="resetValidation"
                                                               @click:append="show1 = !show1"></v-text-field>
                                             </v-col>
-
-                                            <v-col cols="4">
-                                                <v-btn class="pa-2" x-large block :disabled="!valid" color="success"
-                                                       @click="validate"> Login
+                                        </v-row>
+                                        <v-row align="center" justify="center">
+                                            <v-col cols="3">
+                                                <v-btn class="pa-2" large block :disabled="!valid" color="success"
+                                                       @click="validate(true)"> Login
                                                 </v-btn>
                                             </v-col>
+
+                                            <v-divider class="ma-4" vertical></v-divider>
+
+                                            <v-col cols="2">
+                                                <v-btn class="pa-2" large color="blue" outlined @click="socialLogin"
+                                                       :loading="socialButtonLoading">
+                                                    <v-img :max-width="25" src="../assets/login-google-icon.png"/>
+                                                </v-btn>
+                                            </v-col>
+
                                         </v-row>
                                     </v-form>
                                 </v-card-text>
@@ -93,8 +110,9 @@
                                             </v-col>
                                             <v-spacer></v-spacer>
                                             <v-col cols="4">
-                                                <v-btn class="pa-2" x-large block :disabled="!valid" color="success" :loading="buttonLoading"
-                                                       @click="validate"> Registrati
+                                                <v-btn class="pa-2" x-large block :disabled="!valid" color="success"
+                                                       :loading="buttonLoading"
+                                                       @click="validate()"> Registrati
                                                 </v-btn>
                                             </v-col>
 
@@ -118,6 +136,7 @@
         data() {
             return {
                 buttonLoading: false,
+                socialButtonLoading: false,
                 dialog: true,
                 tab: 0,
                 valid: true,
@@ -129,6 +148,11 @@
                 loginPassword: "",
                 loginEmail: "",
                 isAlertOpened: false,
+                isErrorAlertOpened: false,
+                loginErrorMessage: "",
+                passwordErrorMessage: "",
+                emailError: false,
+                passwordError: false,
                 rules: {
                     emailRules: [
                         v => !!v || "Il campo è obbligatorio",
@@ -147,32 +171,71 @@
         },
         watch: {
             isAlertOpened: function (val) {
-                console.log(val)
                 if (val) {
                     setTimeout(() => {
                         this.isAlertOpened = false;
                     }, 5000);
                 }
+            },
+            isErrorAlertOpened: function (val) {
+                if (val) {
+                    setTimeout(() => {
+                        this.isErrorAlertOpened = false;
+                    }, 5000);
+                }
             }
         },
         methods: {
-            validate() {
-                if (this.$refs.registerForm.validate()) {
+            validate(login = false) {
+                if (!login && this.$refs.registerForm.validate()) {
                     this.buttonLoading = true;
                     this.createNewUserAuthentication();
+                } else if (login && this.$refs.loginForm.validate()) {
+                    this.login();
                 }
             },
-            reset() {
-                this.$refs.form.reset();
-            },
-            resetValidation() {
-                this.$refs.form.resetValidation();
-            },
-            createNewUserAuthentication: function () {
+            createNewUserAuthentication() {
                 firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then((result) => {
                     this.buttonLoading = false;
                     this.isAlertOpened = true;
                 })
+            },
+            resetValidation() {
+                if (this.emailError){
+                    this.loginErrorMessage = "";
+                    this.emailError = false;
+                }
+                if (this.passwordError){
+                    this.passwordErrorMessage = "";
+                    this.passwordError = false;
+                }
+            },
+            login() {
+                firebase.auth().signInWithEmailAndPassword(this.loginEmail, this.loginPassword).then((result) => {
+                    this.$router.replace("homepage");
+                }).catch((error) => {
+                    const errorCode = error.code;
+
+                    if (errorCode === 'auth/wrong-password') {
+                        this.passwordErrorMessage = "Password errata"
+                        this.passwordError = true;
+                    }
+
+                    if (errorCode === 'auth/user-not-found') {
+                        this.loginErrorMessage = "Email errata"
+                        this.emailError = true;
+                    }
+                });
+            },
+            socialLogin() {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                this.socialButtonLoading = true;
+
+                firebase.auth().signInWithPopup(provider).then((result) => {
+                    this.$router.replace("homepage");
+                }).catch((error) => {
+                    console.log(error.code);
+                });
             }
         }
     }
