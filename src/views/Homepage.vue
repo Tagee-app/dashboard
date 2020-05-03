@@ -1,26 +1,29 @@
 <template>
     <v-app>
-        <h1> Homepage </h1>
-        <button @click="logout">Logout</button>
+        <v-container>
+            <v-row no-gutters>
+                <v-col cols="2">
+                    <Menu />
+                </v-col>
+            </v-row>
+        </v-container>
     </v-app>
 </template>
 
 <script>
-    import firebase from 'firebase';
+    import Menu from '../components/Menu';
 
     export default {
         name: "Homepage",
+        components:{
+          Menu
+        },
         data() {
             return {}
         },
-        methods: {
-            logout() {
-                firebase.auth().signOut().then(() => {
-                    this.$router.replace("login");
-                })
-            }
-        }
+        methods: {}
     }
 </script>
 <style scoped>
+
 </style>
