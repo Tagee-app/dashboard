@@ -13,7 +13,8 @@
                 </v-alert>
             </div>
 
-            <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px" :hide-overlay="true">
+            <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px" :hide-overlay="true"
+                      no-click-animation>
                 <div>
                     <v-tabs v-model="tab" show-arrows background-color="yellow darken-1" icons-and-text dark grow>
                         <v-tabs-slider color="yellow darken-3"></v-tabs-slider>
@@ -60,10 +61,12 @@
 
                                             <v-divider class="ma-4" vertical></v-divider>
 
-                                            <v-col cols="2">
-                                                <v-btn class="pa-2" large color="blue" outlined @click="socialLogin"
+                                            <v-col cols="4">
+                                                <v-btn class="pa-2" large color="#2984fc" outlined @click="socialLogin"
                                                        :loading="socialButtonLoading">
-                                                    <v-img :max-width="25" src="../assets/login-google-icon.png"/>
+                                                    <v-img :max-width="25" src="../assets/login-google-icon.png"
+                                                           style="margin-right: 5px"/>
+                                                    <span style="color: #2984fc">Accedi con Google</span>
                                                 </v-btn>
                                             </v-col>
 
@@ -201,11 +204,11 @@
                 })
             },
             resetValidation() {
-                if (this.emailError){
+                if (this.emailError) {
                     this.loginErrorMessage = "";
                     this.emailError = false;
                 }
-                if (this.passwordError){
+                if (this.passwordError) {
                     this.passwordErrorMessage = "";
                     this.passwordError = false;
                 }
@@ -234,7 +237,11 @@
                 firebase.auth().signInWithPopup(provider).then((result) => {
                     this.$router.replace("homepage");
                 }).catch((error) => {
-                    console.log(error.code);
+                    const errorCode = error.code;
+
+                    if (errorCode === 'auth/popup-closed-by-user') {
+                        this.socialButtonLoading = false;
+                    }
                 });
             }
         }
