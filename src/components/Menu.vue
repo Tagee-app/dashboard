@@ -1,26 +1,22 @@
 <template>
     <div>
-        <quick-menu
-                :menu-count=4
-                :icon-class=icons
-                :menu-url-list=list
-                :backgroundColor="'orange'"
-                :color="'white'"
-                @process="menuAction"
-        >
-
-        </quick-menu>
+        <Slide>
+            <a id="home" href="#">
+                <span>
+                    <span class="material-icons-two-tone md-light"> home </span> Home</span>
+            </a>
+        </Slide>
     </div>
 </template>
 
 <script>
-    import quickMenu from 'vue-quick-menu';
+    import {Slide} from 'vue-burger-menu'
     import firebase from "firebase";
 
     export default {
         name: "Menu",
         components: {
-            quickMenu
+            Slide
         },
         data() {
             return {
@@ -73,24 +69,6 @@
         font-family: 'Roboto', 'sans-serif';
     }
 
-    i {
-        font-size: 25px !important;
-        margin-top: 14px !important;
-    }
-
-    .fa-user-cog {
-        margin-left: 5px !important;
-    }
-
-    .fa-chart-bar {
-        margin-top: 16px !important;
-    }
-
-    .fa-sign-out-alt {
-        margin-left: 6px !important;
-    }
-
-    div .menu{
-        background-color: green !important;
-    }
+    /* Rules for using icons as white on a dark background. */
+    .material-icons-two-tone.md-light { color: rgba(255, 255, 255, 1); }
 </style>
