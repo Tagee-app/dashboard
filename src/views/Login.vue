@@ -55,7 +55,7 @@
                                         <v-row align="center" justify="center">
                                             <v-col cols="3">
                                                 <v-btn class="pa-2" large block :disabled="!valid" color="success"
-                                                       @click="validate(true)"> Login
+                                                       @click="validate(true)" :loading="buttonLoading"> Login
                                                 </v-btn>
                                             </v-col>
 
@@ -214,9 +214,12 @@
                 }
             },
             login() {
+                this.buttonLoading = true;
                 firebase.auth().signInWithEmailAndPassword(this.loginEmail, this.loginPassword).then((result) => {
+                    this.buttonLoading = false;
                     this.$router.replace("homepage");
                 }).catch((error) => {
+                    this.buttonLoading = false;
                     const errorCode = error.code;
 
                     if (errorCode === 'auth/wrong-password') {
@@ -235,8 +238,10 @@
                 this.socialButtonLoading = true;
 
                 firebase.auth().signInWithPopup(provider).then((result) => {
+                    this.buttonLoading = false;
                     this.$router.replace("homepage");
                 }).catch((error) => {
+                    this.buttonLoading = false;
                     const errorCode = error.code;
 
                     if (errorCode === 'auth/popup-closed-by-user') {
