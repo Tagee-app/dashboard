@@ -21,45 +21,9 @@
         data() {
             return {
                 icons: ['fas fa-home', 'fas fa-chart-bar', 'fas fa-user-cog', 'fas fa-sign-out-alt'],
-                list: [
-                    {
-                        isLink: true,
-                        url: "/homepage"
-                    },
-                    {
-                        isLink: true,
-                        url: "/stats"
-                    },
-                    {
-                        isLink: true,
-                        url: "/settings"
-                    },
-                    {
-                        isLink: false,
-                        url: "/homepage"
-                    }
-                ]
             }
         },
         methods: {
-            menuAction(key = 0) {
-                if (key === 3) {
-                    this.$swal({
-                        title: 'Logout',
-                        text: "Sei sicuro di uscire?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#00b240',
-                        cancelButtonColor: '#cacaca',
-                        confirmButtonText: "Conferma",
-                        cancelButtonText: "Annulla"
-                    }).then(() => {
-                        firebase.auth().signOut().then(() => {
-                            this.$router.replace("login");
-                        })
-                    })
-                }
-            }
         }
     }
 </script>
