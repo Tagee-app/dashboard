@@ -11,7 +11,6 @@
 
 <script>
     import {Slide} from 'vue-burger-menu'
-    import firebase from "firebase";
 
     export default {
         name: "Menu",
@@ -20,7 +19,6 @@
         },
         data() {
             return {
-                icons: ['fas fa-home', 'fas fa-chart-bar', 'fas fa-user-cog', 'fas fa-sign-out-alt'],
             }
         },
         methods: {
