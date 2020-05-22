@@ -1,36 +1,47 @@
 <template>
     <div>
-        <Slide>
-            <a id="home" href="#">
-                <span>
-                    <span class="material-icons-two-tone md-light"> home </span> Home</span>
+        <Push :closeOnNavigation="true">
+            <a id="homepage" href="#">
+                <i class="fas fa-home"></i><span>Homepage</span>
             </a>
-        </Slide>
+            <a id="report" href="#">
+                <i class="fas fa-chart-bar"></i>
+                <span>Report</span>
+            </a>
+            <a id="settings" href="#">
+                <i class="fas fa-user-cog"></i>
+                <span>Impostazioni</span>
+            </a>
+            <a id="logout" href="#">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </Push>
     </div>
 </template>
 
 <script>
-    import {Slide} from 'vue-burger-menu'
+    import {Push} from 'vue-burger-menu'
 
     export default {
         name: "Menu",
         components: {
-            Slide
+            Push
         },
         data() {
-            return {
-            }
+            return {}
         },
-        methods: {
-        }
+        methods: {}
     }
 </script>
 
-<style>
+<style scoped>
     body {
         font-family: 'Roboto', 'sans-serif';
     }
 
-    /* Rules for using icons as white on a dark background. */
-    .material-icons-two-tone.md-light { color: rgba(255, 255, 255, 1); }
+    i {
+        padding-top: 4px;
+    }
+
 </style>
