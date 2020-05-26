@@ -199,9 +199,20 @@
             },
             createNewUserAuthentication() {
                 firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then((result) => {
-                    this.buttonLoading = false;
-                    this.isAlertOpened = true;
-                })
+                    firebase.firestore().collection('users').add({
+                        uid: result.user.uid,
+                        email: this.email,
+                        firstName: this.firstName,
+                        lastName: this.lastName
+                    }).then(() => {
+                        this.buttonLoading = false;
+                        this.isAlertOpened = true;
+                    }).catch((error) => {
+                        console.error("Error writing document: ", error);
+                    });
+                }).catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
             },
             resetValidation() {
                 if (this.emailError) {
@@ -217,7 +228,7 @@
                 this.buttonLoading = true;
                 firebase.auth().signInWithEmailAndPassword(this.loginEmail, this.loginPassword).then((result) => {
                     this.buttonLoading = false;
-                    this.$router.replace("homepage");
+                    this.$router.push('homepage');
                 }).catch((error) => {
                     this.buttonLoading = false;
                     const errorCode = error.code;
@@ -238,6 +249,20 @@
                 this.socialButtonLoading = true;
 
                 firebase.auth().signInWithPopup(provider).then((result) => {
+                    if (result.additionalUserInfo.isNewUser) {
+                        firebase.firestore().collection('users').add({
+                            uid: result.user.uid,
+                            email: result.user.email,
+                            firstName: result.additionalUserInfo.profile.given_name,
+                            lastName: result.additionalUserInfo.profile.family_name,
+                            picture: result.additionalUserInfo.profile.picture,
+                        }).then(() => {
+                            this.buttonLoading = false;
+                        }).catch((error) => {
+                            console.error("Error writing document: ", error);
+                        });
+                    }
+
                     this.buttonLoading = false;
                     this.$router.replace("homepage");
                 }).catch((error) => {

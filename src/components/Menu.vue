@@ -12,16 +12,17 @@
                 <i class="fas fa-user-cog"></i>
                 <span>Impostazioni</span>
             </a>
-            <a id="logout" href="#">
+            <button id="logout" @click="logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
-            </a>
+            </button>
         </Push>
     </div>
 </template>
 
 <script>
     import {Push} from 'vue-burger-menu'
+    import firebase from 'firebase';
 
     export default {
         name: "Menu",
@@ -31,7 +32,15 @@
         data() {
             return {}
         },
-        methods: {}
+        methods: {
+            logout() {
+                firebase.auth().signOut().then(() => {
+                    this.$router.push('login');
+                }).catch(function (error) {
+                    console.log(error)
+                });
+            }
+        }
     }
 </script>
 
