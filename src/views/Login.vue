@@ -43,12 +43,13 @@
                                             <v-col cols="12">
                                                 <v-text-field autocomplete="new-password" v-model="loginPassword"
                                                               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                                                              :rules="[rules.required]" :type="'password'"
+                                                              :rules="[rules.required]"
                                                               name="input-10-1" label="Password"
                                                               hint="Almeno 8 charatteri" counter
                                                               :error="passwordError"
                                                               :error-messages="passwordErrorMessage"
                                                               @input="resetValidation"
+                                                              :type="show1 ? 'text' : 'password'"
                                                               @click:append="show1 = !show1"></v-text-field>
                                             </v-col>
                                         </v-row>
@@ -99,7 +100,7 @@
                                                 <v-text-field autocomplete="new-password" v-model="password"
                                                               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                                                               :rules="[rules.required, rules.min]"
-                                                              :type="'password'" name="input-10-1"
+                                                              :type="show1 ? 'text' : 'password'" name="input-10-1"
                                                               label="Password" hint="Almeno 8 caratteri" counter
                                                               @click:append="show1 = !show1"></v-text-field>
                                             </v-col>
@@ -107,7 +108,7 @@
                                                 <v-text-field autocomplete="new-password" block v-model="verify"
                                                               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                                                               :rules="[rules.required, passwordMatch]"
-                                                              :type="'password'" name="input-10-1"
+                                                              :type="show1 ? 'text' : 'password'" name="input-10-1"
                                                               label="Conferma la password" counter
                                                               @click:append="show1 = !show1"></v-text-field>
                                             </v-col>
