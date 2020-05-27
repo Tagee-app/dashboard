@@ -21,8 +21,8 @@ jobs:
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting --token "$FIREBASE_TOKEN"
-          env:
-            FIREBASE_TOKEN: ${{ secrets.firebaseDeploy }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.firebaseDeploy }}
       - name: Send Push Notification
         uses: techulus/push-github-action@1.0.0
         env:
