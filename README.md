@@ -1,4 +1,5 @@
 # Tagee
+![DEPLOY TO PRODUCTION](https://github.com/Tagee-app/dashboard/workflows/DEPLOY%20TO%20PRODUCTION/badge.svg?branch=master&event=status)
 
 Tagee is a web application created to help and support companies in managing the presence of their collaborators.
 
