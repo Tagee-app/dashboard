@@ -37,7 +37,7 @@
                 firebase.auth().signOut().then(() => {
                     this.$router.push('login');
                 }).catch(function (error) {
-                    console.log(error)
+                    window.console.log(error)
                 });
             }
         }
