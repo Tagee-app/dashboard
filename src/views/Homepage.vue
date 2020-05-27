@@ -10,6 +10,7 @@
                             :locale="locale"
                             :showNonCurrentDates="false"
                             @dateClick="handleDateClick"
+                            :events="events"
                     />
                 </v-row>
 
@@ -78,7 +79,7 @@
 
                                 <v-chip class="ma-2" color="orange" text-color="white">
                                     <span>{{ holidaysCount }}
-                                        <span v-if="holidaysCount == 1"> giorni</span>
+                                        <span v-if="holidaysCount == 1"> giorno</span>
                                         <span v-else> giorni</span>
                                         <span> di ferie già
                                             <span v-if="holidaysCount == 1">utilizzato</span>
@@ -98,10 +99,10 @@
 
                                 <v-chip class="ma-2" color="red" text-color="white">
                                     <span>{{ sicknessCount }}
-                                        <span v-if="holidaysCount == 1"> giorni</span>
+                                        <span v-if="sicknessCount == 1"> giorno</span>
                                         <span v-else> giorni</span>
                                         <span> di malattia
-                                            <span v-if="holidaysCount == 1">dichiarato</span>
+                                            <span v-if="sicknessCount == 1">dichiarato</span>
                                             <span v-else>dichiarati</span>
                                         </span>
                                     </span>
@@ -124,7 +125,7 @@
                 </v-dialog>
             </v-container>
 
-            <Footer />
+            <Footer/>
         </main>
     </v-app>
 </template>
@@ -136,6 +137,7 @@
     import itLocale from '@fullcalendar/core/locales/it';
     import interactionPlugin from '@fullcalendar/interaction';
     import Footer from "@/components/Footer";
+    import firebase from 'firebase';
 
     export default {
         name: "Homepage",
@@ -157,64 +159,81 @@
                 buttons: [
                     {
                         ferie: {
-                            color: "pink lighten-3",
+                            color: "#cd409a",
                             ref: "ferie",
                             outlined: true,
                         }
                     },
                     {
                         permesso: {
-                            color: "deep-purple lighten-3",
+                            color: "#febd13",
                             ref: "permesso",
                             outlined: true,
                         }
                     },
                     {
                         malattia: {
-                            color: "deep-purple lighten-3",
+                            color: "#a455bc",
                             ref: "malattia",
                             outlined: true,
                         }
                     },
                     {
                         smartWorking: {
-                            color: "deep-purple lighten-3",
+                            color: "#fa8558",
                             ref: "smart working",
                             outlined: true,
                         }
                     },
                     {
                         congedoMatrimoniale: {
-                            color: "deep-purple lighten-3",
+                            color: "#f25979",
                             ref: "congedo matrimoniale",
                             outlined: true,
                         }
                     },
                     {
                         maternità: {
-                            color: "deep-purple lighten-3",
+                            color: "#cd409a",
                             ref: "maternità",
                             outlined: true,
                         }
                     }
                 ],
                 formType: "",
-                holidaysCount: 2,
+                holidaysCount: 0,
                 permissionsCount: 6,
-                sicknessCount: 2
+                sicknessCount: 2,
+                events: []
             }
         },
-        computed: {
-            fromDateDisp() {
-                return this.fromDateVal;
-                // format date, apply validations, etc. Example below.
-                // return this.fromDateVal ? this.formatDate(this.fromDateVal) : "";
-            }
+        beforeMount() {
+            this.getAllEvents();
         },
         methods: {
             handleDateClick(arg) {
                 this.requestData = this.formatDateToItalianDate(arg.dateStr);
                 this.dialog = true;
+            },
+            getAllEvents() {
+                const events = firebase.firestore().collection('events');
+                events.where("uid", "==", firebase.auth().currentUser.uid).get().then((documents) => {
+
+                    documents.docs.forEach((doc) => {
+                        if (doc.data().type === "ferie") {
+                            this.holidaysCount++;
+
+                            this.events.push({
+                                id: doc.id,
+                                title: 'Ferie',
+                                backgroundColor: '#cd409a',
+                                borderColor: '#cd409a',
+                                textColor: 'white',
+                                start: doc.data().fromDate
+                            })
+                        }
+                    });
+                })
             },
             formatDateToItalianDate(dataStr) {
                 const searchRegExp = /\//g;
