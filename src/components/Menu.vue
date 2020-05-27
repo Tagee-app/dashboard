@@ -1,21 +1,22 @@
 <template>
     <div>
         <Push :closeOnNavigation="true">
-            <a id="homepage" href="#">
+            <button id="homepage" class="button-menu">
                 <i class="fas fa-home"></i><span>Homepage</span>
-            </a>
-            <a id="report" href="#">
+            </button>
+            <button id="report" class="button-menu">
                 <i class="fas fa-chart-bar"></i>
                 <span>Report</span>
-            </a>
-            <a id="settings" href="#">
+            </button>
+            <button id="settings" class="button-menu">
                 <i class="fas fa-user-cog"></i>
                 <span>Impostazioni</span>
-            </a>
-            <button id="logout" @click="logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
             </button>
+                <button id="logout" @click="logout" class="button-menu bottom-elem">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+
         </Push>
     </div>
 </template>
@@ -44,13 +45,31 @@
     }
 </script>
 
-<style scoped>
+<style>
     body {
         font-family: 'Roboto', 'sans-serif';
     }
 
-    i {
+    .bm-menu {
+        background-color: #fa8558;
+    }
+
+    .bm-cross {
+        background: #ffffff;
+    }
+
+    .bm-burger-bars {
+        background-color: #535353;
+    }
+
+    .button-menu i{
+        color: white;
         padding-top: 4px;
+    }
+
+    .bottom-elem{
+        bottom: 0px;
+        position: absolute;
     }
 
 </style>
