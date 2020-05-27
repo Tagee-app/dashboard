@@ -52,9 +52,6 @@
                 </v-dialog>
 
                 <v-dialog v-model="dialog" persistent max-width="1000px" v-else>
-                    <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-                    </template>
                     <v-card>
                         <v-card-title>
                             <span class="headline">Richiesta per il giorno {{requestData}}</span>
@@ -126,6 +123,8 @@
                     </v-card>
                 </v-dialog>
             </v-container>
+
+            <Footer />
         </main>
     </v-app>
 </template>
@@ -136,12 +135,14 @@
     import dayGridPlugin from '@fullcalendar/daygrid'
     import itLocale from '@fullcalendar/core/locales/it';
     import interactionPlugin from '@fullcalendar/interaction';
+    import Footer from "@/components/Footer";
 
     export default {
         name: "Homepage",
         components: {
             Menu,
-            FullCalendar
+            FullCalendar,
+            Footer
         },
         data() {
             return {
