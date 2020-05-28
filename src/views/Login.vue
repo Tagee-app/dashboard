@@ -16,8 +16,8 @@
             <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px" :hide-overlay="true"
                       no-click-animation>
                 <div>
-                    <v-tabs v-model="tab" show-arrows background-color="#febd13" icons-and-text dark grow>
-                        <v-tabs-slider color="yellow darken-4"></v-tabs-slider>
+                    <v-tabs v-model="tab" show-arrows background-color="#fa8558" icons-and-text dark grow>
+                        <v-tabs-slider color="#febd13"></v-tabs-slider>
                         <v-tab>
                             <i class="material-icons-two-tone">account_circle</i>
                             <div class="caption py-1" style="color: black; font-weight: bold">Login</div>
@@ -55,7 +55,7 @@
                                         </v-row>
                                         <v-row align="center" justify="center">
                                             <v-col cols="3">
-                                                <v-btn class="pa-2" large block :disabled="!valid" color="success"
+                                                <v-btn outlined class="pa-2" large block :disabled="!valid" color="success"
                                                        @click="validate(true)" :loading="buttonLoading"> Login
                                                 </v-btn>
                                             </v-col>
