@@ -57,11 +57,11 @@
     }
 
     .bm-cross {
-        background: #fa8558;
+        background: #fa8558 !important;
     }
 
     .bm-burger-bars {
-        background-color: #fa8558;
+        background-color: #fa8558 !important;
     }
 
     .button-menu i {
