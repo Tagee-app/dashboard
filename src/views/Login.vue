@@ -116,6 +116,7 @@
                                             <v-col cols="4">
                                                 <v-btn class="pa-2" x-large block :disabled="!valid" color="success"
                                                        :loading="buttonLoading"
+                                                       outlined
                                                        @click="validate()"> Registrati
                                                 </v-btn>
                                             </v-col>
