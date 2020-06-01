@@ -3,6 +3,15 @@
         <Menu/>
         <main id="page-wrap">
             <v-container style="margin-top: 60px">
+                <v-snackbar v-model="isAlertOpened"
+                            right="true"
+                            top="true"
+                            timeout="6000"
+                            color="success"
+                            multi-line="true"
+                > Richiesta inviata con successo. Attendi l'accettazione da parte del tuo referente.
+                    <v-btn color="white" text @click="isAlertOpened = false"> Chiudi</v-btn>
+                </v-snackbar>
                 <v-row>
                     <FullCalendar
                             defaultView="dayGridMonth"
@@ -136,7 +145,8 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn outlined color="success" @click="saveEvent" :disabled="successButton">
+                            <v-btn outlined color="success" @click="saveEvent" :disabled="successButton"
+                                   :loading="loadingButton">
                                 Salva
                             </v-btn>
                             <v-btn outlined color="error" @click="dialog = false">
@@ -240,7 +250,9 @@
                 timePicker: {
                     start: null,
                     end: null,
-                }
+                },
+                loadingButton: false,
+                isAlertOpened: false,
             }
         },
         watch: {
@@ -251,7 +263,14 @@
                     }
                 },
                 deep: true
-            }
+            },
+            isAlertOpened: function (val) {
+                if (val) {
+                    setTimeout(() => {
+                        this.isAlertOpened = false;
+                    }, 5000);
+                }
+            },
         },
         beforeMount() {
             this.getAllEvents();
@@ -274,6 +293,7 @@
                 console.log(event)
             },
             saveEvent() {
+                this.loadingButton = true;
                 const events = firebase.firestore().collection('events');
 
                 events.add({
@@ -294,6 +314,10 @@
                         start: this.fromDateRequest,
                         type: this.eventType,
                     });
+
+                    this.loadingButton = false;
+                    this.dialog = false;
+                    this.isAlertOpened = true;
                 }).catch(function (error) {
                     console.error("Error writing document: ", error);
                 });
