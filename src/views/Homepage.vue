@@ -10,6 +10,7 @@
                             :locale="locale"
                             :showNonCurrentDates="false"
                             @dateClick="handleDateClick"
+                            :day-render="setNationalHolidays"
                             :events="events"
                     />
                 </v-row>
@@ -118,8 +119,8 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="dialog = false">Annulla</v-btn>
-                            <v-btn color="blue darken-1" text @click="dialog = false">Salva</v-btn>
+                            <v-btn outlined color="success" @click="dialog = false">Salva</v-btn>
+                            <v-btn outlined color="error" @click="dialog = false">Annulla</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -204,7 +205,8 @@
                 holidaysCount: 0,
                 permissionsCount: 6,
                 sicknessCount: 2,
-                events: []
+                events: [],
+                nationalHolidays: ['0-1', '0-6', '3-25', '4-1', '5-2', '7-15', '10-1', '11-8', '11-25', '11-26']
             }
         },
         beforeMount() {
@@ -214,6 +216,13 @@
             handleDateClick(arg) {
                 this.requestData = this.formatDateToItalianDate(arg.dateStr);
                 this.dialog = true;
+            },
+            setNationalHolidays(dayRenderInfo) {
+                const date = dayRenderInfo.date.getMonth() + "-" + dayRenderInfo.date.getDate()
+
+                if (this.nationalHolidays.includes(date)) {
+                    dayRenderInfo.el.setAttribute("style", "background-color: rgba(255, 0, 0, 0.15)")
+                }
             },
             getAllEvents() {
                 const events = firebase.firestore().collection('events');
