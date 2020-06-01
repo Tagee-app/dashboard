@@ -2,7 +2,7 @@
     <div>
         <v-footer dark padless>
             <v-card class="flex">
-                <v-card-title style="background-color: #f25979">
+                <v-card-title style="background-color: #fa8558">
                     <small>© {{ new Date().getFullYear() }}, made with &hearts; by <span style="cursor:pointer;" @click="openSocialLink('https://github.com/pacoogle')">Pacoogle</span></small>
 
                     <v-spacer></v-spacer>
