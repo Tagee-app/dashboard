@@ -52,7 +52,7 @@
     }
 
     .bm-menu {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
         box-shadow: rgb(236, 236, 236) 10px 0px 5px -2px
     }
 
