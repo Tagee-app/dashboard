@@ -18,14 +18,18 @@ const routes: Array<RouteConfig> = [
     {
         path: '/login',
         name: 'Login',
-        component: Login
+        component: Login,
+        meta: {
+            title: 'Login'
+        }
     },
     {
         path: '/homepage',
         name: 'Homepage',
         component: Homepage,
         meta: {
-            requiresAuth: true
+            requiresAuth: true,
+            title: 'Homepage'
         }
     }
 ]
@@ -37,6 +41,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     const currentUser = firebase.auth().currentUser;
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    window.document.title = to.meta && to.meta.title ? to.meta.title : '-';
 
     if (requiresAuth && !currentUser) next('login')
     else if (!requiresAuth && currentUser) next('homepage');
