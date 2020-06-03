@@ -4,11 +4,11 @@
         <main id="page-wrap">
             <v-container style="margin-top: 60px">
                 <v-snackbar v-model="isAlertOpened"
-                            right="true"
-                            top="true"
-                            timeout="6000"
+                            :right="true"
+                            :top="true"
+                            :timeout="6000"
                             color="success"
-                            multi-line="true"
+                            :multi-line="true"
                 > Richiesta inviata con successo. Attendi l'accettazione da parte del tuo referente.
                     <v-btn color="white" text @click="isAlertOpened = false"> Chiudi</v-btn>
                 </v-snackbar>
@@ -232,7 +232,7 @@
                     },
                     {
                         maternità: {
-                            color: "#cd409a",
+                            color: "#1876d2",
                             ref: "maternità",
                             outlined: true,
                             disable: false,
@@ -242,8 +242,11 @@
                 eventType: "",
                 showPermissionForm: true,
                 holidaysCount: 0,
-                permissionsCount: 6,
-                sicknessCount: 2,
+                permissionsCount: 0,
+                sicknessCount: 0,
+                smartWorkingCount: 0,
+                maternityCount: 0,
+                leaveCount: 0, //congedo
                 events: [],
                 nationalHolidays: ['0-1', '0-6', '3-25', '4-1', '5-2', '7-15', '10-1', '11-8', '11-25', '11-26'],
                 successButton: true,
@@ -296,24 +299,9 @@
                 this.loadingButton = true;
                 const events = firebase.firestore().collection('events');
 
-                events.add({
-                    fromDate: this.fromDateRequest,
-                    toDate: "",
-                    fromHour: this.timePicker.start,
-                    toHour: this.timePicker.end,
-                    type: this.eventType,
-                    uid: firebase.auth().currentUser.uid,
-                    approved: false
-                }).then((docRef) => {
-                    this.events.push({
-                        id: docRef.id,
-                        title: 'Ferie',
-                        backgroundColor: this.eventType === 'ferie' ? 'rgba(205,64,154,0.20)' : '#fa8558',
-                        borderColor: this.eventType === 'ferie' ? 'rgba(205,64,154,0.20)' : '#fa8558',
-                        textColor: 'black',
-                        start: this.fromDateRequest,
-                        type: this.eventType,
-                    });
+                events.add(this.getEventObjectFirestore()).then((docRef) => {
+                    const eventObject = this.getEventObject(docRef.id)
+                    this.events.push(eventObject);
 
                     this.loadingButton = false;
                     this.dialog = false;
@@ -332,22 +320,7 @@
             getAllEvents() {
                 const events = firebase.firestore().collection('events');
                 events.where("uid", "==", firebase.auth().currentUser.uid).get().then((documents) => {
-
-                    documents.docs.forEach((doc) => {
-                        if (doc.data().type === "ferie") {
-                            if (doc.data().approved) this.holidaysCount++;
-
-                            this.events.push({
-                                id: doc.id,
-                                title: 'Ferie',
-                                backgroundColor: doc.data().approved ? '#cd409a' : 'rgba(205,64,154,0.20)',
-                                borderColor: doc.data().approved ? '#cd409a' : 'rgba(205,64,154,0.20)',
-                                textColor: doc.data().approved ? 'white' : 'black',
-                                start: doc.data().fromDate,
-                                type: doc.data().type,
-                            })
-                        }
-                    });
+                    this.constructEventsArray(documents);
                 })
             },
             formatDateToItalianDate(dataStr) {
@@ -406,7 +379,117 @@
                 })(navigator.userAgent || navigator.vendor || window.opera);
                 return check;
             },
-            allowedMinutes: v => v % 5 === 0
+            allowedMinutes: v => v % 5 === 0,
+            getEventObject(eventId) {
+                const event = this.getEventFromEventType(false, this.eventType);
+
+                return {
+                    id: eventId,
+                    title: event.title,
+                    backgroundColor: event.backgroundColor,
+                    borderColor: event.borderColor,
+                    textColor: 'black',
+                    start: this.fromDateRequest,
+                    type: this.eventType,
+                }
+            },
+            getEventObjectFirestore() {
+                return {
+                    fromDate: this.fromDateRequest,
+                    toDate: "",
+                    fromHour: this.timePicker.start,
+                    toHour: this.timePicker.end,
+                    type: this.eventType,
+                    uid: firebase.auth().currentUser.uid,
+                    approved: false,
+                    createdAt: new Date().toLocaleString()
+                }
+            },
+            constructEventsArray(documents) {
+                documents.docs.forEach((doc) => {
+                    const eventType = doc.data().type;
+                    const approvedEvent = doc.data().approved;
+
+                    this.incrementSnackbarCounter(eventType, approvedEvent)
+
+                    const event = this.getEventFromEventType(true, eventType, approvedEvent);
+                    const eventObject = {
+                        id: doc.id,
+                        title: event.title,
+                        backgroundColor: event.backgroundColor,
+                        borderColor: event.borderColor,
+                        textColor: event.textColor,
+                        start: doc.data().fromDate,
+                        type: eventType,
+                    };
+
+                    this.events.push(eventObject)
+                });
+            },
+            getEventFromEventType(fullColor = false, eventType, approved = false) {
+                let backgroundColor = '';
+                let borderColor = '';
+                let title = '';
+                const condition = fullColor && approved;
+
+                const textColor = condition ? 'white' : 'black';
+
+
+                switch (eventType) {
+                    case 'ferie':
+                        backgroundColor = condition ? 'rgba(205,64,154)' : 'rgba(205,64,154,0.20)';
+                        borderColor = condition ? 'rgba(205,64,154)' : 'rgba(205,64,154,0.20)';
+                        title = "Ferie";
+                        break;
+                    case 'permesso':
+                        backgroundColor = condition ? 'rgba(254,189,19)' : 'rgba(254,189,19,0.20)';
+                        borderColor = condition ? 'rgba(254,189,19)' : 'rgba(254,189,19,0.20)';
+                        title = "Permesso";
+                        break;
+                    case 'malattia':
+                        backgroundColor = condition ? 'rgb(164,85,188)' : 'rgb(164,85,188, 0.20)';
+                        borderColor = condition ? 'rgb(164,85,188)' : 'rgb(164,85,188, 0.20)';
+                        title = "Malattia";
+                        break;
+                    case 'smartWorking':
+                        backgroundColor = condition ? 'rgb(250,133,88)' : 'rgb(250,133,88,0.20)';
+                        borderColor = condition ? 'rgb(250,133,88)' : 'rgb(250,133,88,0.20)';
+                        title = "Smart Working";
+                        break;
+                    case 'congedoMatrimoniale':
+                        backgroundColor = condition ? 'rgb(242,89,121)' : 'rgb(242,89,121,0.20)';
+                        borderColor = condition ? 'rgb(242,89,121)' : 'rgb(242,89,121,0.20)';
+                        title = "Congedo Matrimoniale";
+                        break;
+                    case 'maternità':
+                        backgroundColor = condition ? 'rgb(24,118,210)' : 'rgb(24,118,210,0.20)';
+                        borderColor = condition ? 'rgb(24,118,210)' : 'rgb(24,118,210,0.20)';
+                        title = "Maternità";
+                        break;
+                }
+
+                return {
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    title: title,
+                    textColor: textColor
+                }
+            },
+            incrementSnackbarCounter(eventType, approved) {
+                if (eventType === "ferie" && approved) {
+                    this.holidaysCount++;
+                } else if (eventType === "permesso" && approved) {
+                    this.permissionsCount++;
+                } else if (eventType === "malattia" && approved) {
+                    this.sicknessCount++;
+                } else if (eventType === "smartWorking" && approved) {
+                    this.smartWorkingCount++;
+                } else if (eventType === "congedoMatrimoniale" && approved) {
+                    this.leaveCount++;
+                } else if (eventType === "maternità" && approved) {
+                    this.maternityCount++;
+                }
+            }
         }
     }
 </script>
